@@ -13,8 +13,15 @@ import java.util.List;
 
 import br.com.rafaelfelipeac.chat.R;
 import br.com.rafaelfelipeac.chat.adapter.MessageAdapter;
+import br.com.rafaelfelipeac.chat.callback.ListenMessagesCallback;
+import br.com.rafaelfelipeac.chat.callback.SendMessageCallback;
 import br.com.rafaelfelipeac.chat.model.Message;
 import br.com.rafaelfelipeac.chat.service.ChatService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,14 +47,20 @@ public class MainActivity extends AppCompatActivity {
 
         text = (EditText) findViewById(R.id.main_text);
 
-        chatService = new ChatService(this);
-        chatService.ListenMessages();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://192.168.0.2:8080/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        chatService = retrofit.create(ChatService.class);
+
+        listenMessages();
 
         sendButton = (Button) findViewById(R.id.main_send_button);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                chatService.send(new Message(IdClient, text.getText().toString()));
+                chatService.send(new Message(IdClient, text.getText().toString())).enqueue(new SendMessageCallback());
             }
         });
     }
@@ -58,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
         MessageAdapter adapter = new MessageAdapter(IdClient, messages, this);
         messagesList.setAdapter(adapter);
 
-        chatService.ListenMessages();
+        listenMessages();
+    }
+
+    public void listenMessages() {
+        Call<Message> call = chatService.ListenMessages();
+        call.enqueue(new ListenMessagesCallback(this));
     }
 }
