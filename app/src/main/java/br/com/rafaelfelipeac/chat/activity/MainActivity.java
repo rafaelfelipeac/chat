@@ -5,10 +5,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.PersistableBundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -67,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     EventBus eventBus;
 
+    @Inject
+    InputMethodManager inputMethodManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +85,12 @@ public class MainActivity extends AppCompatActivity {
         component = app.getComponent();
         component.inject(this);
 
-        messages = new ArrayList<>();
+        if(savedInstanceState != null) {
+            messages = (List<Message>) savedInstanceState.getSerializable("messages");
+        }
+        else {
+            messages = new ArrayList<>();
+        }
 
         MessageAdapter adapter = new MessageAdapter(idClient, messages, this);
         messagesList.setAdapter(adapter);
@@ -92,9 +102,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable("messages", (ArrayList<Message>)messages);
+
+
+    }
+
     @OnClick(R.id.main_send_button)
     public void sendMessage() {
         chatService.send(new Message(idClient, text.getText().toString())).enqueue(new SendMessageCallback());
+
+        text.getText().clear();
+        inputMethodManager.hideSoftInputFromInputMethod(text.getWindowToken(), 0);
     }
 
     @Subscribe
