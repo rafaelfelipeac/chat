@@ -2,11 +2,13 @@ package br.com.rafaelfelipeac.chat.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by Rafael Felipe on 09/07/2017.
  */
 
-public class Message {
+public class Message implements Serializable {
 
     private int id;
     @SerializedName("text")

@@ -1,6 +1,7 @@
 package br.com.rafaelfelipeac.chat.component;
 
 import br.com.rafaelfelipeac.chat.activity.MainActivity;
+import br.com.rafaelfelipeac.chat.adapter.MessageAdapter;
 import br.com.rafaelfelipeac.chat.module.ChatModule;
 import dagger.Component;
 
@@ -11,4 +12,5 @@ import dagger.Component;
 @Component(modules=ChatModule.class)
 public interface ChatComponent {
     void inject(MainActivity activity);
+    void inject(MessageAdapter adapter);
 }
