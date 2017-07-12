@@ -71,8 +71,8 @@ public class MessageAdapter extends BaseAdapter{
 
         picasso.with(activity).load("http://api.adorable.io/avatars/285/" + idMessage + ".png").into(avatar);
 
-        if(idClient != idMessage) {
-            row.setBackgroundColor(Color.CYAN);
+        if(idClient == idMessage) {
+            row.setBackgroundColor(Color.argb(100, 144,238,144));
         }
 
         text.setText(message.getText());

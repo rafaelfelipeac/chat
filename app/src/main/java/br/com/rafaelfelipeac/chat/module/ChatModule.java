@@ -30,7 +30,7 @@ public class ChatModule {
     @Provides
     public ChatService getChatService() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.2:8080/")
+                .baseUrl("https://chat-rafaelfelipeac.herokuapp.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
